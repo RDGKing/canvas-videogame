@@ -35,10 +35,10 @@ class Circle {
 
         context.drawImage(this.image, this.posX - this.radius, this.posY - this.radius, this.radius * 2, this.radius * 2);
         context.beginPath();
-        context.strokeStyle = "black";
-        context.lineWidth = 3;
+        //context.strokeStyle = "black";
+        //context.lineWidth = 3;
         context.arc(this.posX, this.posY, this.radius, 0, Math.PI * 2, false);
-        context.stroke();
+        //context.stroke();
         context.closePath();
     }
 
@@ -151,33 +151,28 @@ updateCircles();
 
 
 
-
-////////7///////// Event listener para el clic del mouse en el canvas///////////////////
+let score = 0;
+const scoreElement = document.getElementById('score');
 canvas.addEventListener("click", function (event) {
-    
-    let rect = canvas.getBoundingClientRect(); // Obtener las dimensiones y posición del canvas
-    let mouseX = event.clientX - rect.left; // Coordenada X del clic ajustada al canvas
-    let mouseY = event.clientY - rect.top; // Coordenada Y del clic ajustada al canvas
+    let rect = canvas.getBoundingClientRect();
+    let mouseX = event.clientX - rect.left;
+    let mouseY = event.clientY - rect.top;
 
-    // Verificar si el clic está dentro de algún círculo
     for (let i = 0; i < arrayCircle.length; i++) {
         let circle = arrayCircle[i];
         let dx = mouseX - circle.posX;
         let dy = mouseY - circle.posY;
-        let distanceSquared = dx * dx + dy * dy; // Distancia euclidiana al cuadrado
+        let distanceSquared = dx * dx + dy * dy;
         if (distanceSquared <= circle.radius * circle.radius) {
-            // Eliminar el círculo del array
             arrayCircle.splice(i, 1);
-            break; // Salir del bucle una vez que se elimina un círculo
+            score++; // Incrementar el puntaje
+            scoreElement.textContent = `Score: ${score}`; // Actualizar el marcador
+            break;
         }
     }
 
-    // Limpiar el canvas y redibujar los círculos restantes
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     arrayCircle.forEach(circle => {
         circle.draw(ctx);
     });
 });
-
-
-////////7///////// Event listener para el clic del mouse en el canvas///////////////////
