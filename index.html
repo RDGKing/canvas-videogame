@@ -10,27 +10,38 @@
 
 <body>
     <header>
-        <h1>Christsmash day</h1>
+        <h1>Fight the power</h1>
     </header>
 
     <div id="score">Score: 0</div>
+    <div id="lifes">Lifes: 3</div>
+
 
     <div id="instructions">
         <h1>¿Cómo jugar?</h1>
         <ol>
-            <h3>Observa atentamente la pantalla.</h3>
-            <br>Cuando veas un círculo, ¡da clic en él rápidamente!</br>
-            <br>¡Debes destruir todos los círculos antes de que lleguen arriba!</br>
-            <br><b>¡Pero cuidado!</b></br>
-            <br>Si más de la mitad de los círculos escapan, perderás.</br>
+            <li><h3>¡Bienvenido al Espacio!</h3></li>
+            <li>Evita los ataques del villano moviéndote con el mouse.</li>
+            <li>Tienes <b>3 vidas</b>. Si un ataque te alcanza, perderás una vida.</li>
+            <li>Recoge los <b>orbes amarillos</b> para obtener vidas extra.</li>
+            <li>Obten la mayor cantidad de puntos para ganar!</li>
         </ol>
     </div>
     
 
     <div id="canvas-container">
         <canvas id="canvas"></canvas>
+        <button id="startButton">Start</button>
+        <div id="gameOverMessage">
+            <h1>¡Juego Terminado!</h1>
+            <p>Presiona F5 para volver a jugar</p>
+        </div>
     </div>
     
+
+    
+    
+
     <footer>
         <p><b>Hecho por Angel Rodrigo Barrios Yáñez</b></p>
     </footer>
