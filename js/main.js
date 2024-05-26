@@ -17,10 +17,14 @@ imagen.src = 'images/background.png'; // Reemplaza esto con la ruta a tu imagen 
 
 let score = 600;
 let lifes = 3;
+let puntaje = 0;
 
 let enemy = false;
+let gameOverFlag = false; // Bandera para controlar la operación de puntaje al perder
+let gameWinFlag = false; // Bandera para controlar la operación de puntaje al ganar
 
 
+const puntajeElement = document.getElementById('puntaje');
 const lifesElement = document.getElementById('lifes');
 const scoreElement = document.getElementById('score');
 const gameOverElement = document.getElementById('gameOverMessage');
@@ -34,7 +38,7 @@ class Circle {
         this.radius = radius;
         this.speed = speed;
         this.dx = 1 * this.speed;
-        this.dy = -1 * this.speed; // Cambiar a dirección hacia arriba
+        this.dy = 1 * this.speed; // Cambiar a dirección hacia arriba
         this.imageUrl = imageUrl; // Esta línea es la correcta
         this.collisionOccurred = false; // Nueva propiedad para controlar si ya ocurrió una colisión
 
@@ -61,11 +65,11 @@ class Circle {
             this.dx = -this.dx;
         }
 
-        if (this.posY + this.radius >= canvasHeight) {
-            this.dy = -Math.abs(this.dy);
+        if (this.posY - this.radius <= 0) {
+            this.dy = +Math.abs(this.dy);
         }
 
-        if (this.posY - this.radius * -2 <= 0) {
+        if (this.posY + this.radius * -2 >= canvasHeight) {
             // Eliminar el círculo del array si sobrepasa la parte superior del canvas
             let index = arrayCircle.indexOf(this);
             if (index > -1) {
@@ -88,13 +92,13 @@ function getDistance(posX1, posY1, posX2, posY2) {
 /////////////////CREA CIRCULOS////////////////////
 let arrayCircle = [];
 function createCircle() {
-    let randomR = Math.floor(Math.random() * 36 + 18);
+    let randomR = Math.floor(Math.random() * 34 + 19);
     let randomX, randomY;
     do {
         randomX = Math.random() * (canvasWidth - randomR * 2) + randomR;
-        randomY = canvasHeight + Math.random() * (canvasHeight - randomR * 2) + randomR;
+        randomY = - canvasHeight + Math.random() * (canvasHeight - randomR * 2) + randomR;
     } while (checkOverlap(randomX, randomY, randomR));
-    let randomS = Math.floor(Math.random() * 4 + 1);
+    let randomS = (Math.random() * 4.5 + 0.5);
     let imageUrl = ['images\\atackmax.png', 'images\\atack.png', 'images\\atack2.png', 'images\\atack3.png', 'images\\Extralife.png','images\\atack4.png'];
     const circulo = Math.floor(Math.random() * imageUrl.length);
     let miCirculo = new Circle(randomX, randomY, randomR, randomS, imageUrl[circulo]);
@@ -162,9 +166,13 @@ function updateCircles() {
             if (circle.collisionOccurred == false) {
                 if (circle.imageUrl == 'images\\Extralife.png') {
                     lifes = lifes + 1;
+                    puntaje = puntaje +15;
+                    puntajeElement.textContent = `Puntaje: ${puntaje}`; // Actualizar el marcador
                     lifesElement.textContent = `Vidas: ${lifes}`; // Actualizar el marcador
                     circle.collisionOccurred = true;
                 } else {
+                    puntaje = puntaje - 10;
+                    puntajeElement.textContent = `Puntaje: ${puntaje}`; // Actualizar el marcador
                     score--; // Incrementar el puntaje
                     scoreElement.textContent = `Vida del enemigo: ${score}`; // Actualizar el marcador
                     lifes = lifes - 1;
@@ -291,31 +299,45 @@ function updateCanvas() {
             bullets.splice(index, 1);
             score--;
             scoreElement.textContent = `Vida del enemigo: ${score}`; // Actualizar el marcador
+            puntaje = puntaje +9;
+            puntajeElement.textContent = `Puntaje: ${puntaje}`; // Actualizar el marcador
+
         }
     });
     if (lifes > 0) {
         updateCircles();
     } else {
-        imagen.src = 'images/lose.png'; // Reemplaza esto con la ruta a tu imagen de fondo
-        clearTimeout(createCirclesTimeout);
-        gameOverElement.style.display = 'block'; // O 'inline', 'inline-block', dependiendo del tipo de elemento
-        lifesElement.textContent = `Vidas: ${lifes}`; // Actualizar el marcador
-        atack = false;
-        clearInterval(bulletInterval);
-        enemy = false; // Desactiva la aparición del villano
+        if (!gameOverFlag) { // Solo ejecuta este bloque una vez
+            imagen.src = 'images/lose.png'; // Reemplaza esto con la ruta a tu imagen de fondo
+            clearTimeout(createCirclesTimeout);
+            gameOverElement.style.display = 'block'; // O 'inline', 'inline-block', dependiendo del tipo de elemento
+            lifesElement.textContent = `Vidas: ${lifes}`; // Actualizar el marcador
+            puntaje = puntaje - 500;
+            puntajeElement.textContent = `Puntaje: ${puntaje}`; // Actualizar el marcador
+            atack = false;
+            clearInterval(bulletInterval);
+            enemy = false; // Desactiva la aparición del villano
+            gameOverFlag = true; // Marca el juego como terminado
+        }
     }
+    
 
-    if(score == 0){
-        imagen.src = 'images/win.png'; // Reemplaza esto con la ruta a tu imagen de fondo
-
-        arrayCircle = []; // Elimina todos los círculos del array
-        clearTimeout(createCirclesTimeout);
-        gameWinElement.style.display = 'block'; // O 'inline', 'inline-block', dependiendo del tipo de elemento
-        scoreElement.textContent = `Vida del enemigo: ${score}`; // Actualizar el marcador
-        atack = false;
-        clearInterval(bulletInterval);
-        enemy = false; // Desactiva la aparición del villano
+    if (score == 0) {
+        if (!gameWinFlag) { // Solo ejecuta este bloque una vez
+            imagen.src = 'images/win.png'; // Reemplaza esto con la ruta a tu imagen de fondo
+            arrayCircle = []; // Elimina todos los círculos del array
+            clearTimeout(createCirclesTimeout);
+            gameWinElement.style.display = 'block'; // O 'inline', 'inline-block', dependiendo del tipo de elemento
+            scoreElement.textContent = `Vida del enemigo: ${score}`; // Actualizar el marcador
+            puntaje = puntaje + 1000;
+            puntajeElement.textContent = `Puntaje: ${puntaje}`; // Actualizar el marcador
+            atack = false;
+            clearInterval(bulletInterval);
+            enemy = false; // Desactiva la aparición del villano
+            gameWinFlag = true; // Marca el juego como ganado
+        }
     }
+    
 
     mouse.draw(ctx); // Dibujar el cuadrado que sigue al mouse
     requestAnimationFrame(updateCanvas);
