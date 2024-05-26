@@ -4,36 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fight the power</title>
+    <title>Cosmic Battle</title>
     <link href="css\style.css" rel="stylesheet">
     <link rel="icon" href="images\\icono.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
 </head>
 
-<body>
-    <header>
-        <h1>Fight the power</h1>
-        <img src="images\\head.png">
+<body class = "bg-black">
+    <header class="container-fluid flex-row bg-danger text-danger-emphasis d-flex justify-content-center mt-0">
+        <img class = "mt-2" src="images\\head.png">
+        <h1>Cosmic Battle</h1>
+        <img class = "mt-2" src="images\\head.png">
 
     </header>
 
-    <div id="score">Vida del enemigo: 600</div>
-    <div id="lifes">Vidas: 3</div>
-    <div id="puntaje">Puntaje: 0</div>
-    <div id="maxScore">Puntaje Máximo: 0</div> <!-- Nuevo elemento para mostrar el puntaje máximo -->
+    <div class="container  fw-bold flex-row bg-danger text-danger-emphasis justify-content-center mt-0 rounded border d-flex " id="score">Vida del enemigo: 600
+    </div>
+    <div class="container fw-bold flex-row bg-danger text-danger-emphasis justify-content-center mt-0 rounded  d-flex" id="lifes">Vidas: 3</div>
+    <div class="container fw-bold flex-row bg-danger text-danger-emphasis justify-content-center mt-0 rounded d-flex" id="puntaje">Puntaje: 0</div>
+    <div class="container  fw-bold flex-row bg-danger text-danger-emphasis justify-content-center mt-0 rounded d-flex" id="maxScore">Puntaje Máximo: 0
+    </div> <!-- Nuevo elemento para mostrar el puntaje máximo -->
 
 
-    <div id="instructions">
-        <h1>¿Cómo jugar?</h1>
-        <ol>
-            <li><h3>¡Lucha por el poder!</h3></li>
+    <div class="container-md flex-row bg-danger text-danger-emphasis d-flex justify-content-center mt-0 rounded"
+        id="instructions">
+        <ol class = "list-unstyled">
+            <li>
+                <h5>¡Lucha por el poder!</h5>
+            </li>
             <li>Evita los ataques del villano moviéndote con el mouse.</li>
-            <li>Tienes <b>3 vidas</b>. Si un ataque te alcanza, perderás una vida.</li>
-            <li>Recoge los <b>orbes amarillos</b> para obtener vidas extra.</li>
+            <li>Tienes <b>3 vidas</b>. Si un ataque te alcanza, perderás una.</li>
+            <li>Recoge los <b>orbes amarillos</b> para recuperar tu salud.</li>
             <li>¡Mata al enemigo para ganar!</li>
         </ol>
     </div>
-    
+
 
     <div id="canvas-container">
         <canvas id="canvas"></canvas>
@@ -47,17 +54,24 @@
             <p>Haz derrotado al enemigo</p>
         </div>
     </div>
-    
 
-    
-    
 
-    <footer>
+
+
+
+    <footer class="container-fluid flex-row bg-danger text-danger-emphasis d-flex justify-content-center mt-0">
         <p><b>Hecho por Angel Rodrigo Barrios Yáñez</b></p>
     </footer>
-    
+
     <script src="js/main.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gifler@0.6.0/dist/gifler.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+
 
 </body>
 
