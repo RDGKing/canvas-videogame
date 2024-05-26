@@ -107,7 +107,7 @@ function createCircle() {
     arrayCircle.push(miCirculo);
 }
 let circlesCreated = 0;
-let Delay = 3000;
+let Delay = 3400;
 let createCirclesTimeout; // Variable para almacenar el identificador del temporizador
 
 function createCircles() {
@@ -115,10 +115,10 @@ function createCircles() {
         createCircle();
         circlesCreated++;
         console.log(Delay);
-        if (Delay > 600) {
+        if (Delay > 1000) {
             Delay -= 100;
-        } else if (Delay <= 600 && Delay !== 300) {
-            Delay -= 1;
+        } else if (Delay <= 1000 && Delay !== 500) {
+            Delay -= 10;
         }
         createCirclesTimeout = setTimeout(() => generateCircleWithDelay(Delay), currentDelay); // Asignar setTimeout a createCirclesTimeout
     }
