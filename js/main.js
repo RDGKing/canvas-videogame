@@ -355,9 +355,9 @@ class Villain {
         this.width = width;
         this.height = height;
         this.speed = speed;
-        this.x = 0; // Inicialmente comenzará desde la izquierda
+        this.x = Math.random() * (canvasWidth - this.width);
         this.y = 0; // La posición en y permanece constante en la parte superior de la pantalla
-        this.direction = 1; // Dirección del movimiento: 1 para derecha, -1 para izquierda
+        this.direction = Math.random() < 0.5 ? -1 : 1;// Dirección del movimiento: 1 para derecha, -1 para izquierda
         this.image = new Image();
         this.image.src = imageUrl;
     }
