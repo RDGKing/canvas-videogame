@@ -15,13 +15,16 @@ audio.volume = 0.5; // Ajustar el volumen (opcional)
 var imagen = new Image();
 imagen.src = 'images/background.png'; // Reemplaza esto con la ruta a tu imagen de fondo
 
-let score = 0;
+let score = 600;
 let lifes = 3;
+
+let enemy = false;
+
 
 const lifesElement = document.getElementById('lifes');
 const scoreElement = document.getElementById('score');
 const gameOverElement = document.getElementById('gameOverMessage');
-
+const gameWinElement = document.getElementById('gameWinMessage');
 
 /////////////////////CLASE CIRCULO//////////////////////////
 class Circle {
@@ -68,13 +71,6 @@ class Circle {
             if (index > -1) {
                 arrayCircle.splice(index, 1);
             }
-            if (this.imageUrl == 'images\\Extralife.png') {
-                score--; // Incrementar el puntaje
-                scoreElement.textContent = `Score: ${score}`; // Actualizar el marcador
-            } else {
-                score++; // Incrementar el puntaje
-                scoreElement.textContent = `Score: ${score}`; // Actualizar el marcador
-            }
         }
 
         this.posX += this.dx;
@@ -92,37 +88,33 @@ function getDistance(posX1, posY1, posX2, posY2) {
 /////////////////CREA CIRCULOS////////////////////
 let arrayCircle = [];
 function createCircle() {
-    let randomR = Math.floor(Math.random() * 42 + 14);
+    let randomR = Math.floor(Math.random() * 36 + 18);
     let randomX, randomY;
     do {
         randomX = Math.random() * (canvasWidth - randomR * 2) + randomR;
         randomY = canvasHeight + Math.random() * (canvasHeight - randomR * 2) + randomR;
     } while (checkOverlap(randomX, randomY, randomR));
-    let imageUrl = ['images\\atack.png', 'images\\atack2.png', 'images\\atack3.png', 'images\\Extralife.png'];
+    let randomS = Math.floor(Math.random() * 4 + 1);
+    let imageUrl = ['images\\atackmax.png', 'images\\atack.png', 'images\\atack2.png', 'images\\atack3.png', 'images\\Extralife.png','images\\atack4.png'];
     const circulo = Math.floor(Math.random() * imageUrl.length);
-   // if(circulo == )
-    let randomS = Math.floor(Math.random() * 8 + 1);
     let miCirculo = new Circle(randomX, randomY, randomR, randomS, imageUrl[circulo]);
 
     arrayCircle.push(miCirculo);
 }
 let circlesCreated = 0;
-let Delay = 2000;
+let Delay = 3000;
 let createCirclesTimeout; // Variable para almacenar el identificador del temporizador
 
 function createCircles() {
     function generateCircleWithDelay(currentDelay) {
         createCircle();
         circlesCreated++;
-
-        if (Delay > 500) {
+        console.log(Delay);
+        if (Delay > 600) {
             Delay -= 100;
-        } else if (Delay <= 300 && Delay !== 150) {
+        } else if (Delay <= 600 && Delay !== 300) {
             Delay -= 1;
         }
-
-        console.log(`${Delay} ${circlesCreated}`);
-
         createCirclesTimeout = setTimeout(() => generateCircleWithDelay(Delay), currentDelay); // Asignar setTimeout a createCirclesTimeout
     }
 
@@ -141,7 +133,7 @@ function checkOverlap(x, y, radius) {
     }
     return false;
 }
-/////////////Controla superposicion al crear circulos///////////////
+///////////////Controla superposicion al crear circulos/////////////////
 
 //////////REBOTE DE CIRCULOS/////////////
 function updateCircles() {
@@ -168,16 +160,15 @@ function updateCircles() {
         if (distance < circle.radius + mouse.size / 2) {
 
             if (circle.collisionOccurred == false) {
-
                 if (circle.imageUrl == 'images\\Extralife.png') {
                     lifes = lifes + 1;
-                    lifesElement.textContent = `Lifes: ${lifes}`; // Actualizar el marcador
+                    lifesElement.textContent = `Vidas: ${lifes}`; // Actualizar el marcador
                     circle.collisionOccurred = true;
                 } else {
                     score--; // Incrementar el puntaje
-                    scoreElement.textContent = `Score: ${score}`; // Actualizar el marcador
+                    scoreElement.textContent = `Vida del enemigo: ${score}`; // Actualizar el marcador
                     lifes = lifes - 1;
-                    lifesElement.textContent = `Lifes: ${lifes}`; // Actualizar el marcador
+                    lifesElement.textContent = `Vidas: ${lifes}`; // Actualizar el marcador
                     circle.collisionOccurred = true;
                 }
                 let index = arrayCircle.indexOf(circle);
@@ -192,6 +183,28 @@ function updateCircles() {
 //////////REBOTE DE CIRCULOS/////////////
 
 ////CREA PUNTERO///
+
+class Bullet {
+    constructor(x, y, width, height, speed, color) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.speed = speed;
+        this.color = color;
+    }
+
+    draw(context) {
+        context.fillStyle = this.color;
+        context.fillRect(this.x, this.y, this.width, this.height);
+    }
+
+    update() {
+        this.y -= this.speed;
+    }
+}
+
+let bullets = [];
 
 
 class Mouse {
@@ -219,10 +232,22 @@ class Mouse {
 let cursor = 'images/cohete-espacial.png';
 const mouse = new Mouse(32, cursor); // Tamaño del cuadrado y color
 
+let bulletInterval;
+let atack = false;
 canvas.addEventListener('mousemove', function (event) {
     let rect = canvas.getBoundingClientRect();
     let mouseX = event.clientX - rect.left;
     let mouseY = event.clientY - rect.top;
+
+
+    if (atack == true) {
+        clearInterval(bulletInterval);
+
+        // Creamos un nuevo intervalo que generará una bala cada 5 segundos
+        bulletInterval = setInterval(() => {
+            bullets.push(new Bullet(mouseX, mouseY, 5, 10, 5, 'red'));
+        }, 100); // 5000 milisegundos = 5 segundos
+    }
 
     mouse.updatePosition(mouseX, mouseY);
 });
@@ -232,17 +257,106 @@ canvas.addEventListener('mousemove', function (event) {
 function updateCanvas() {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx.drawImage(imagen, 0, 0, canvasWidth, canvasHeight); // Dibujar la imagen de fondo nuevamente
+
+    if (enemy) { // Comprueba si el villano debe estar presente
+        villain.update();
+        villain.draw(ctx);
+    }
+
+    bullets.forEach((bullet, index) => {
+        bullet.update();
+        bullet.draw(ctx);
+
+        if (
+            mouse.posX < villain.x + villain.width &&
+            mouse.posX > villain.x &&
+            mouse.posY < villain.y + villain.height &&
+            mouse.posY > villain.y
+        ) {
+            lifes = 0;
+        }
+
+        // Eliminar balas fuera del lienzo
+        if (bullet.y < 0) {
+            bullets.splice(index, 1);
+        }
+
+        if (
+            bullet.x < villain.x + villain.width &&
+            bullet.x + bullet.width > villain.x &&
+            bullet.y < villain.y + villain.height &&
+            bullet.y + bullet.height > villain.y
+        ) {
+            // Si hay una colisión, eliminamos la bala y restamos puntos
+            bullets.splice(index, 1);
+            score--;
+            scoreElement.textContent = `Vida del enemigo: ${score}`; // Actualizar el marcador
+        }
+    });
     if (lifes > 0) {
         updateCircles();
     } else {
+        imagen.src = 'images/lose.png'; // Reemplaza esto con la ruta a tu imagen de fondo
         clearTimeout(createCirclesTimeout);
         gameOverElement.style.display = 'block'; // O 'inline', 'inline-block', dependiendo del tipo de elemento
+        lifesElement.textContent = `Vidas: ${lifes}`; // Actualizar el marcador
+        atack = false;
+        clearInterval(bulletInterval);
+        enemy = false; // Desactiva la aparición del villano
     }
+
+    if(score == 0){
+        imagen.src = 'images/win.png'; // Reemplaza esto con la ruta a tu imagen de fondo
+
+        arrayCircle = []; // Elimina todos los círculos del array
+        clearTimeout(createCirclesTimeout);
+        gameWinElement.style.display = 'block'; // O 'inline', 'inline-block', dependiendo del tipo de elemento
+        scoreElement.textContent = `Vida del enemigo: ${score}`; // Actualizar el marcador
+        atack = false;
+        clearInterval(bulletInterval);
+        enemy = false; // Desactiva la aparición del villano
+    }
+
     mouse.draw(ctx); // Dibujar el cuadrado que sigue al mouse
     requestAnimationFrame(updateCanvas);
 }
 updateCanvas();
 /////////////////////////
+
+
+class Villain {
+    constructor(width, height, speed, imageUrl) {
+        this.width = width;
+        this.height = height;
+        this.speed = speed;
+        this.x = 0; // Inicialmente comenzará desde la izquierda
+        this.y = 0; // La posición en y permanece constante en la parte superior de la pantalla
+        this.direction = 1; // Dirección del movimiento: 1 para derecha, -1 para izquierda
+        this.image = new Image();
+        this.image.src = imageUrl;
+    }
+
+    draw(context) {
+        context.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+
+    update() {
+        // Mover el villano horizontalmente
+        this.x += this.speed * this.direction;
+
+        // Cambiar la dirección si alcanza los límites del canvas
+        if (this.x <= 0 || this.x + this.width >= canvasWidth) {
+            this.direction *= -1;
+            this.speed = this.speed + 0.1;
+        }
+    }
+}
+
+let villain = new Villain(80, 120, 0.4, 'images\\villano.png');
+
+
+
+
 
 //////////////BOTON START/////////////
 document.getElementById('startButton').addEventListener('click', function () {
@@ -250,4 +364,6 @@ document.getElementById('startButton').addEventListener('click', function () {
     audio.play(); // Reproducir el audio cuando comience el juego
     createCircles();
     updateCanvas();
+    atack = true;
+    enemy = true; // Establece enemy en true cuando se hace clic en el botón de inicio
 });
