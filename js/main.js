@@ -29,6 +29,7 @@ const lifesElement = document.getElementById('lifes');
 const scoreElement = document.getElementById('score');
 const gameOverElement = document.getElementById('gameOverMessage');
 const gameWinElement = document.getElementById('gameWinMessage');
+const maxScoreElement = document.getElementById('maxScore');
 
 /////////////////////CLASE CIRCULO//////////////////////////
 class Circle {
@@ -318,6 +319,7 @@ function updateCanvas() {
             clearInterval(bulletInterval);
             enemy = false; // Desactiva la aparición del villano
             gameOverFlag = true; // Marca el juego como terminado
+            actualizarMaxScore(puntaje);
         }
     }
     
@@ -335,7 +337,9 @@ function updateCanvas() {
             clearInterval(bulletInterval);
             enemy = false; // Desactiva la aparición del villano
             gameWinFlag = true; // Marca el juego como ganado
+            actualizarMaxScore(puntaje);
         }
+
     }
     
 
@@ -375,8 +379,34 @@ class Villain {
 }
 
 let villain = new Villain(80, 120, 0.4, 'images\\villano.png');
+////////////////////////////
 
+// Función para actualizar el puntaje máximo en localStorage
+function actualizarMaxScore(puntaje) {
+    // Obtiene el puntaje máximo almacenado en localStorage
+    let maxScore = localStorage.getItem('maxScore');
 
+    // Convierte el puntaje máximo almacenado a un número entero
+    maxScore = maxScore ? parseInt(maxScore) : 0;
+
+    // Actualiza el puntaje máximo si el puntaje actual es mayor
+    if (puntaje > maxScore) {
+        maxScore = puntaje;
+        // Almacena el nuevo puntaje máximo en localStorage
+        localStorage.setItem('maxScore', maxScore);
+    }
+
+    // Muestra el puntaje máximo en el elemento maxScoreElement
+    maxScoreElement.textContent = `Puntaje Máximo: ${maxScore}`;
+}
+
+// Al cargar la página, muestra el puntaje máximo almacenado en localStorage
+window.onload = function() {
+    let maxScore = localStorage.getItem('maxScore');
+    if (maxScore) {
+        maxScoreElement.textContent = `Puntaje Máximo: ${maxScore}`;
+    }
+};
 
 
 
